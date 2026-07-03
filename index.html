@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoa Ngữ Xiaoyu - Luyện Tập HSK 1</title>
+    <style>
+        :root {
+            --primary: #2e7d32;
+            --secondary: #e8f5e9;
+            --text: #333;
+            --accent: #d32f2f;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(135deg, var(--primary), #1b5e20);
+            color: white;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+        }
+        h2 {
+            color: var(--primary);
+            margin-top: 0;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+        }
+        /* Flashcard từ vựng */
+        .flashcard-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .flashcard {
+            width: 280px;
+            height: 180px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            border: 1px solid #ddd;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .card-front {
+            background-color: var(--secondary);
+        }
+        .card-front h3 {
+            font-size: 48px;
+            margin: 0;
+            color: #1b5e20;
+        }
+        .card-back {
+            background-color: white;
+            transform: rotateY(180deg);
+        }
+        .card-back p {
+            font-size: 20px;
+            margin: 5px 0;
+        }
+        .btn-nav {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-nav:hover { background-color: #1b5e20; }
+        
+        /* Ngữ pháp sắp xếp câu */
+        .word-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+            min-height: 45px;
+            padding: 10px;
+            background: #fafafa;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+        }
+        .word-block {
+            background: white;
+            border: 2px solid var(--primary);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            user-select: none;
+            font-weight: bold;
+        }
+        .answer-zone {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            min-height: 45px;
+            padding: 10px;
+            background: var(--secondary);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        /* Phát âm */
+        .audio-btn {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .audio-btn:hover { background: #0b7dda; }
+        .pinyin-text {
+            font-size: 18px;
+            color: #666;
+            margin: 5px 0 15px 0;
+        }
+
+        /* Luyện dịch */
+        .translation-box {
+            background: #fff9c4;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        .hidden-answer {
+            display: none;
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: 1px solid #c8e6c9;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Hoa Ngữ Xiaoyu (华语小宇)</h1>
+        <p>Hệ thống luyện tập tương tác HSK 1 bài sở hữu & quốc tịch</p>
+    </header>
+
+    <!-- PHẦN 1: LUYỆN TỪ VỰNG -->
+    <div class="section">
+        <h2>1. Luyện Tập Từ Vựng (Flashcards)</h2>
+        <p style="color: #666; font-style: italic;">Bấm vào thẻ để lật xem Pinyin và nghĩa Tiếng Việt.</p>
+        <div class="flashcard-container">
+            <div class="flashcard" id="flashcard" onclick="this.classList.toggle('flipped')">
+                <div class="flashcard-inner">
+                    <div class="card-front">
+                        <h3 id="vocab-hanzi">汉语</h3>
+                    </div>
+                    <div class="card-back">
+                        <p><strong>Pinyin:</strong> <span id="vocab-pinyin">Hànyǔ</span></p>
+                        <p><strong>Nghĩa:</strong> <span id="vocab-viet">Tiếng Trung Quốc</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; gap: 10px; display: flex; justify-content: center;">
+            <button class="btn-nav" onclick="prevVocab()">Trước</button>
+            <button class="btn-nav" onclick="nextVocab()">Sau</button>
+        </div>
+    </div>
+
+    <!-- PHẦN 2: LUYỆN NGỮ PHÁP (SẮP XẾP CÂU) -->
+    <div class="section">
+        <h2>2. Luyện Tập Ngữ Pháp (Sắp xếp câu đúng)</h2>
+        <p><strong>Đề bài:</strong> <span id="grammar-req">Cô ấy là giáo viên tiếng Trung của tôi.</span></p>
+        <p style="color: #666; font-style: italic;">Bấm vào các từ bên dưới để xếp thành câu hoàn chỉnh:</p>
+        
+        <div class="answer-zone" id="answer-zone"></div>
+        <div class="word-pool" id="word-pool"></div>
+        
+        <button class="btn-nav" onclick="checkGrammarAnswer()">Kiểm tra kết quả</button>
+        <button class="btn-nav" style="background:#777" onclick="resetGrammar()">Làm lại</button>
+        <span id="grammar-feedback" style="margin-left: 15px; font-weight: bold;"></span>
+    </div>
+
+    <!-- PHẦN 3: LUYỆN PHÁT ÂM -->
+    <div class="section">
+        <h2>3. Luyện Phát Âm (Nghe và Đọc theo)</h2>
+        <p style="color: #666; font-style: italic;">Bấm vào nút loa để nghe máy đọc chuẩn, sau đó học sinh tự nói to theo mẫu.</p>
+        <div id="pronounce-list">
+            <!-- Sẽ tự động điền bằng Javascript -->
+        </div>
+    </div>
+
+    <!-- PHẦN 4: ĐOẠN VĂN LUYỆN DỊCH -->
+    <div class="section">
+        <h2>4. Thử Thách Dịch Đoạn Văn</h2>
+        <div class="translation-box">
+            "Tôi có 2 người bạn tốt. Họ tên là Nguyệt Nguyệt và Lý Nguyệt. Nguyệt Nguyệt là người Trung Quốc, Lý Nguyệt là người Mỹ. Nguyệt Nguyệt là giáo viên tiếng Trung của tôi. Lý Nguyệt là bạn học của tôi. Ai là giáo viên tiếng Trung của các bạn?"
+        </div>
+        <button class="btn-nav" style="background-color: var(--accent);" onclick="toggleTranslationAnswer()">Xem đáp án chuẩn</button>
+        
+        <div class="hidden-answer" id="translation-answer">
+            <p><strong>Chữ Hán:</strong><br>我<b>有两个</b>好朋⁠友。<b>她们</b>的名字叫月月和李月。月月是中国人，李月是美国人。月月是<b>我的汉语老师</b>。李月是<b>我的同学</b>。谁是<b>你们的汉语老师</b>？</p>
+            <hr>
+            <p><strong>Pinyin:</strong><br>Wǒ <b>yǒu liǎng gè</b> hǎo péngyou. <b>Tāmen</b> de míngzi jiào Yuèyue hé Lǐ Yuè. Yuèyue shì Zhōngguórén, Lǐ Yuè shì Měiguórén. Yuèyue shì <b>wǒ de Hànyǔ lǎoshī</b>. Lǐ Yuè shì <b>wǒ de tóngxué</b>. Shéi shì <b>nǐmen de Hànyǔ lǎoshī</b>?</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu từ vựng
+    const vocabData = [
+        { hanzi: "汉语", pinyin: "Hànyǔ", viet: "Tiếng Trung Quốc" },
+        { hanzi: "哪", pinyin: "nǎ", viet: "Nào (đại từ nghi vấn)" },
+        { hanzi: "国", pinyin: "guó", viet: "Nước, quốc gia" },
+        { hanzi: "呢", pinyin: "ne", viet: "Còn... thì sao? (trợ từ cuối câu)" },
+        { hanzi: "他", pinyin: "tā", viet: "Anh ấy, cậu ấy" },
+        { hanzi: "他们", pinyin: "tāmen", viet: "Các anh ấy, họ (nhóm nam hoặc hỗn hợp)" },
+        { hanzi: "同学", pinyin: "tóngxué", viet: "Bạn học" },
+        { hanzi: "朋友", pinyin: "péngyou", viet: "Bạn bè" }
+    ];
+    let currentVocabIdx = 0;
+
+    function updateVocabCard() {
+        document.getElementById('flashcard').classList.remove('flipped');
+        setTimeout(() => {
+            document.getElementById('vocab-hanzi').innerText = vocabData[currentVocabIdx].hanzi;
+            document.getElementById('vocab-pinyin').innerText = vocabData[currentVocabIdx].pinyin;
+            document.getElementById('vocab-viet').innerText = vocabData[currentVocabIdx].viet;
+        }, 150);
+    }
+    function nextVocab() { currentVocabIdx = (currentVocabIdx + 1) % vocabData.length; updateVocabCard(); }
+    function prevVocab() { currentVocabIdx = (currentVocabIdx - 1 + vocabData.length) % vocabData.length; updateVocabCard(); }
+
+    // Dữ liệu Ngữ pháp (Sắp xếp câu)
+    const grammarQuestions = [
+        { req: "Cô ấy là giáo viên tiếng Trung của tôi.", words: ["她", "是", "我的", "汉语", "老师"], correct: "她是我的汉语老师" },
+        { req: "Bạn là người nước nào?", words: ["你", "是", "哪", "国人", "？"], correct: "你是哪国人？" },
+        { req: "Họ là bạn học của tôi.", words: ["他们", "是", "我的", "同学"], correct: "他们是我的同学" }
+    ];
+    let curGrammarIdx = 0;
+
+    function initGrammar() {
+        const q = grammarQuestions[curGrammarIdx];
+        document.getElementById('grammar-req').innerText = q.req;
+        document.getElementById('answer-zone').innerHTML = '';
+        document.getElementById('grammar-feedback').innerText = '';
+        
+        // Trộn từ ngẫu nhiên
+        const shuffledWords = [...q.words].sort(() => Math.random() - 0.5);
+        const pool = document.getElementById('word-pool');
+        pool.innerHTML = '';
+        shuffledWords.forEach(w => {
+            const block = document.createElement('div');
+            block.className = 'word-block';
+            block.innerText = w;
+            block.onclick = () => moveWord(block);
+            pool.appendChild(block);
+        });
+    }
+
+    function moveWord(block) {
+        const answerZone = document.getElementById('answer-zone');
+        const wordPool = document.getElementById('word-pool');
+        if (block.parentElement === wordPool) {
+            answerZone.appendChild(block);
+        } else {
+            wordPool.appendChild(block);
+        }
+    }
+
+    function checkGrammarAnswer() {
+        const blocks = document.querySelectorAll('#answer-zone .word-block');
+        let userAns = "";
+        blocks.forEach(b => userAns += b.innerText);
+        const feedback = document.getElementById('grammar-feedback');
+        
+        if (userAns === grammarQuestions[curGrammarIdx].correct.replace(/\s+/g, '')) {
+            feedback.innerText = "✓ Chính xác! Quá giỏi!";
+            feedback.style.color = "green";
+            setTimeout(() => {
+                curGrammarIdx = (curGrammarIdx + 1) % grammarQuestions.length;
+                initGrammar();
+            }, 2000);
+        } else {
+            feedback.innerText = "✗ Chưa đúng rồi, cô thử lật ngược lại xem sao!";
+            feedback.style.color = "red";
+        }
+    }
+    function resetGrammar() { initGrammar(); }
+
+    // Dữ liệu phát âm & Máy đọc tự động giọng Trung chuẩn (TTS)
+    const pronounceData = [
+        { hanzi: "我有一个好朋友。", pinyin: "Wǒ yǒu yí gè hǎo péngyou." },
+        { hanzi: "你是哪国人？", pinyin: "Nǐ shì nǎ guórén?" },
+        { hanzi: "她是 my 汉语老师，你呢？", hanziActual: "她是我的汉语老师，你呢？", pinyin: "Tā shì wǒ de Hànyǔ lǎoshī, nǐ ne?" }
+    ];
+
+    function initPronounce() {
+        const listContainer = document.getElementById('pronounce-list');
+        listContainer.innerHTML = '';
+        pronounceData.forEach((item, index) => {
+            const div = document.createElement('div');
+            div.style.marginBottom = "15px";
+            const hz = item.hanziActual ? item.hanziActual : item.hanzi;
+            div.innerHTML = `
+                <div style="font-size: 22px; font-weight: bold; color: #1b5e20;">
+                    ${item.hanzi} 
+                    <button class="audio-btn" onclick="speakText('${hz}')">🔊 Nghe phát âm</button>
+                </div>
+                <div class="pinyin-text">${item.pinyin}</div>
+            `;
+            listContainer.appendChild(div);
+        });
+    }
+
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN'; // Chuyển giọng chuẩn đại lục
+            utterance.rate = 0.8;    // Tốc độ hơi chậm cho HSK 1 nghe rõ
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert("Trình duyệt không hỗ trợ phát âm tự động.");
+        }
+    }
+
+    // Ẩn hiện phần đáp án dịch đoạn văn
+    function toggleTranslationAnswer() {
+        const ans = document.getElementById('translation-answer');
+        ans.style.display = (ans.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Khởi chạy toàn bộ khi mở trang web
+    window.onload = function() {
+        updateVocabCard();
+        initGrammar();
+        initPronounce();
+    };
+</script>
+
+</body>
+</html>
